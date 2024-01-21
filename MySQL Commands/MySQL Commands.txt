@@ -1,0 +1,71 @@
+-- Quality of Life Table
+
+DROP TABLE IF EXISTS country_qualityoflife;
+CREATE TABLE `country_qualityoflife` (
+  `ID` int NOT NULL AUTO_INCREMENT,
+  `Country_Code` char(3) DEFAULT NULL,
+  `Purchasing_Power` decimal(4,1) DEFAULT NULL, /* The consumer’s ability to buy goods with their currency as compared to other nations. Higher values are representative of high inflation. */
+  `Safety_Index` decimal(3,1) DEFAULT NULL, /* the level of safety in the country. Higher is safer */
+  `Pollution_Index` decimal(3,1) DEFAULT NULL, /* the level of pollution in the country. Lower is better */
+  `QOL_Index` decimal(4,1) DEFAULT NULL, /* The level of quality of life in the country. Higher is better */
+  PRIMARY KEY (`ID`),
+  KEY `FK_qol_country_code_idx` (`Country_Code`),
+  CONSTRAINT `FK_qol_country_code` FOREIGN KEY (`Country_Code`) REFERENCES `country` (`Code`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+-- formerly collated w/ utf8mb4_0900_ai_ci
+
+START TRANSACTION;
+INSERT INTO country_qualityoflife VALUES (1, 'ABW', 108.7, 70.5, 34.3, 173.4);
+INSERT INTO country_qualityoflife VALUES (2, 'AFG', 135.7, 22.5, 85.3, 127.5);
+INSERT INTO country_qualityoflife VALUES (3, 'AGO', 166.7, 34.5, 93.3, 137.5);
+INSERT INTO country_qualityoflife VALUES (4, 'AIA', 118.7, 80.5, 77.3, 177.5);
+INSERT INTO country_qualityoflife VALUES (5, 'ALB', 115.7, 55.5, 77.3, 99.4);
+INSERT INTO country_qualityoflife VALUES (6, 'AND', 114.7, 87.5, 25.3, 162.5);
+INSERT INTO country_qualityoflife VALUES (7, 'ANT', 116.7, 45.5, 78.3, 155.5);
+INSERT INTO country_qualityoflife VALUES (8, 'ARE', 106.7, 86.5, 49.3, 171.5);
+INSERT INTO country_qualityoflife VALUES (9, 'ARG', 496.7, 36.5, 51.3, 111.5);
+INSERT INTO country_qualityoflife VALUES (10, 'ARM', 143.7, 78.5, 62.3, 119.5);
+INSERT INTO country_qualityoflife VALUES (11, 'ASM', 143.7, 42.5, 78.3, 150.5);
+INSERT INTO country_qualityoflife VALUES (12, 'ATA', NULL, NULL, NULL, NULL);
+INSERT INTO country_qualityoflife VALUES (13, 'ATF', NULL, NULL, NULL, NULL);
+INSERT INTO country_qualityoflife VALUES (14, 'ATG', 110.7, 43.5, 43.3, 146.5);
+INSERT INTO country_qualityoflife VALUES (15, 'AUS', 135.7, 53.5, 29.3, 163.5);
+INSERT INTO country_qualityoflife VALUES (16, 'AUT', 121.7, 71.5, 22.3, 179.5);
+INSERT INTO country_qualityoflife VALUES (17, 'AZE', 212.7, 68.5, 73.3, 107.5);
+INSERT INTO country_qualityoflife VALUES (18, 'BDI', 200.7, 43.5, 88.3, 151.4);
+INSERT INTO country_qualityoflife VALUES (19, 'BEL', 129.7, 51.5, 50.3, 156.5);
+INSERT INTO country_qualityoflife VALUES (20, 'BEN', 108.7, 68.5, 97.3, 175.4);
+INSERT INTO country_qualityoflife VALUES (21, 'BFA', 126.7, 51.5, 62.3, 153.4);
+INSERT INTO country_qualityoflife VALUES (22, 'BGD', 120.7, 38.5, 85.3, 69.4);
+INSERT INTO country_qualityoflife VALUES (23, 'BGR', 135.7, 63.5, 64.3, 132.4);
+INSERT INTO country_qualityoflife VALUES (24, 'BHR', 101.7, 76.5, 71.3, 146.5);
+INSERT INTO country_qualityoflife VALUES (25, 'BHS', 122.7, 43.5, 62.3, 110.5);
+INSERT INTO country_qualityoflife VALUES (26, 'BIH', 125.7, 58.5, 60.3, 127.4);
+INSERT INTO country_qualityoflife VALUES (27, 'BLR', 466.7, 49.5, 45.3, 119.4);
+INSERT INTO country_qualityoflife VALUES (28, 'BLZ', 117.7, 48.5, 54.3, 152.5);
+INSERT INTO country_qualityoflife VALUES (29, 'BMU', 115.7, 64.5, 15.3, 176.5);
+INSERT INTO country_qualityoflife VALUES (30, 'BOL', 110.7, 35.5, 72.3, 93.4);
+COMMIT;
+
+/* Join the purchasepower column from the Qualityoflife table with all Costofliving elements, excluding keys */
+SELECT COL.Country_Code, QOL.Purchasing_Power, COL.Avg_Family_Four, COL.Avg_Single, COL.COL_Index, COL.Rent_One_Bed, Col.Rent_Three_Bed
+FROM country_costofliving AS COL
+JOIN country_qualityoflife AS QOL ON COL.Country_Code = QOL.Country_Code;
+
+/* Select all countries in North America and return all of their cities (Sub) */
+SELECT c.Name AS Country, ci.Name AS City
+FROM country c
+JOIN city ci ON c.Code = ci.CountryCode
+WHERE c.Continent = 'North America';
+
+/* Select all countries with English as a language (Simple) */
+-- Identifying all countries where English is a language (Simple)
+SELECT CountryCode
+FROM countrylanguage
+WHERE Language = 'English';
+
+/* Select all countries with a pollution index higher than 75 (Simple) */
+-- Identifying all countries with a pollution index higher than 75 (Simple)
+SELECT Country_Code
+FROM country_qualityoflife
+WHERE Pollution_Index > 75;
